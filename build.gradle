@@ -4,7 +4,7 @@ plugins {
     id 'java'
 }
 
-group 'co.edu.uniquindio'
+group 'com.compraClick'
 version = '1.0-SNAPSHOT'
 description 'E-commerce basico'
 

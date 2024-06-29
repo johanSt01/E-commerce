@@ -1,9 +1,9 @@
-package co.edu.uniquindio.proyecto;
+package com.compraClick;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
-public class ProyectoApplication {
+public class CompraClickApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ProyectoApplication.class, args);
+        SpringApplication.run(CompraClickApplication.class, args);
     }
 }
