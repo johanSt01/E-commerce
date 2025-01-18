@@ -1,4 +1,4 @@
-package com.compraClick.modelo.entidades;
+package com.compraClick.Model.entities;
 
 import jakarta.persistence.Entity;
 import lombok.Getter;

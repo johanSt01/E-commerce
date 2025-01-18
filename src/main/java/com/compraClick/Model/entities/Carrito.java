@@ -1,8 +1,7 @@
-package com.compraClick.modelo.entidades;
+package com.compraClick.Model.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.web.service.annotation.GetExchange;
 
 import java.io.Serializable;
 

@@ -1,6 +1,6 @@
-package com.compraClick.modelo.entidades;
+package com.compraClick.Model.entities;
 
-import com.compraClick.modelo.enumeraciones.Categoria;
+import com.compraClick.Model.enums.Categoria;
 import jakarta.persistence.*;
 import lombok.*;
 

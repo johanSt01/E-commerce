@@ -1,7 +1,7 @@
-package com.compraClick.modelo.entidades;
+package com.compraClick.Model.entities;
 
-import com.compraClick.modelo.enumeraciones.Ciudad;
-import com.compraClick.modelo.enumeraciones.EstadoUsuario;
+import com.compraClick.Model.enums.Ciudad;
+import com.compraClick.Model.enums.EstadoUsuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -45,10 +45,9 @@ public class Usuario extends Cuenta implements Serializable {
     /**
      * Teléfono del usuario, debe ser único, no nulo y tener un máximo de 10 caracteres.
      */
-    @Column(unique = false, length = 10, insertable = true, updatable = true, nullable = false)
+    @Column(unique = true, length = 10, insertable = true, updatable = true, nullable = false)
     @Pattern(regexp = "^\\d{10}$", message = "El teléfono debe tener exactamente 10 dígitos")
     private String telefono;
-
 
     /**
      * Dirección del usuario, no debe exceder los 100 caracteres y es obligatoria.

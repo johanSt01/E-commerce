@@ -1,4 +1,4 @@
-package com.compraClick.modelo.enumeraciones;
+package com.compraClick.Model.enums;
 
 public enum EstadoPQRS {
     pendiente("Pendiente"),

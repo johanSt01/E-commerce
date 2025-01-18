@@ -1,7 +1,7 @@
-package com.compraClick.modelo.entidades;
+package com.compraClick.Model.entities;
 
-import com.compraClick.modelo.enumeraciones.EstadoPQRS;
-import com.compraClick.modelo.enumeraciones.TipoPQRS;
+import com.compraClick.Model.enums.EstadoPQRS;
+import com.compraClick.Model.enums.TipoPQRS;
 import jakarta.persistence.*;
 import lombok.*;
 
