@@ -1,7 +1,6 @@
 package com.compraClick.DTO.User;
 
 import com.compraClick.Model.enums.Ciudad;
-import com.compraClick.Model.enums.EstadoUsuario;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

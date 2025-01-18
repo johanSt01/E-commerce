@@ -16,7 +16,18 @@ public class UsuarioServicioImpl implements UsuarioServicio {
     private final UsuarioRepository usuarioRepo;
 
     @Override
-    public int crearUsuario(UsuarioDTO usuarioDTO) {
+    public int crearUsuario(UsuarioDTO usuarioDTO) throws Exception {
+
+        //Validacion de que el usuario no este registrado
+        if( estaRepetidaCedula(usuarioDTO.cedula()) ){
+            throw new Exception("La cédula "+usuarioDTO.cedula()+" ya está en uso");
+        }
+
+        //Validacion de que el usuario no este registrado
+        if( estaRepetidoCorreo(usuarioDTO.email()) ){
+            throw new Exception("El correo "+usuarioDTO.email()+" ya está en uso");
+        }
+
         Usuario usuario = new Usuario();
         usuario.setEmail(usuarioDTO.email());
         //Encriptar la contraseña
@@ -32,8 +43,17 @@ public class UsuarioServicioImpl implements UsuarioServicio {
         usuario.setIdCiudad(usuarioDTO.idCiudad());
         usuario.setEstadoUsuario(EstadoUsuario.Activo);
 
+        // Guardar el usuario en la base de datos
         Usuario nuevoUsuario = usuarioRepo.save(usuario);
 
         return nuevoUsuario.getId();
+    }
+
+    private boolean estaRepetidaCedula(String cedula){
+        return usuarioRepo.findByCedula(cedula) != null;
+    }
+
+    private boolean estaRepetidoCorreo(String correo){
+        return usuarioRepo.findByEmail(correo) != null;
     }
 }
