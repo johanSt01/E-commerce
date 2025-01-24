@@ -1,5 +1,6 @@
 package com.compraClick.Service.Implementations;
 
+import com.compraClick.DTO.User.DetalleUsuarioDTO;
 import com.compraClick.DTO.User.UsuarioDTO;
 import com.compraClick.Model.enums.EstadoUsuario;
 import com.compraClick.Repository.UsuarioRepository;
@@ -56,4 +57,21 @@ public class UsuarioServicioImpl implements UsuarioServicio {
     private boolean estaRepetidoCorreo(String correo){
         return usuarioRepo.findByEmail(correo) != null;
     }
+
+    @Override
+    public int actualizarUsuario(DetalleUsuarioDTO usuarioDTO) throws Exception {
+
+        return 0;
+    }
+
+    @Override
+    public int eliminarUsuario(UsuarioDTO usuarioDTO) throws Exception {
+        return 0;
+    }
+
+    @Override
+    public int buscarUsuario(UsuarioDTO usuarioDTO) throws Exception {
+        return 0;
+    }
+
 }
