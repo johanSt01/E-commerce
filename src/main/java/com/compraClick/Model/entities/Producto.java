@@ -4,6 +4,7 @@ import com.compraClick.Model.enums.Categoria;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,14 +21,16 @@ public class Producto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id; // Identificador único del producto
 
-    @Column(unique = false, length = 200, insertable = true, updatable = false, nullable = false)
+    @Column(unique = false, length = 200, insertable = true, updatable = true, nullable = false)
     private String nombre; // Nombre del producto
 
     @Column(unique = false, length = 500, insertable = true, updatable = true, nullable = true)
     private String descripcion; // Descripción del producto
 
-    @Column(unique = false, length = 255, insertable = true, updatable = true, nullable = false)
-    private String imagen; // URL o referencia de la imagen del producto
+    @ElementCollection //indica que la coleccion se almacena en una tabla diferente
+    @CollectionTable(name = "producto_imagenes", joinColumns = @JoinColumn(name = "producto_id")) //Definir el nombre de la tabla secundaria
+    @Column(name = "imagen", length = 255, nullable = false) //define la columna en la tabla secundaria
+    private List<String> imagenes = new ArrayList<>(); // Lista de imágenes del producto
 
     @Column(unique = false, insertable = true, updatable = true, nullable = false)
     private double precio; // Precio del producto

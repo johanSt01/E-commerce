@@ -4,6 +4,7 @@ import com.compraClick.DTO.Authentication.LoginDTO;
 import com.compraClick.DTO.Authentication.TokenDTO;
 import com.compraClick.Model.entities.Cuenta;
 import com.compraClick.Model.entities.Usuario;
+import com.compraClick.Model.enums.EstadoUsuario;
 import com.compraClick.Repository.CuentaRepository;
 import com.compraClick.Service.Interfaces.AutenticacionServicio;
 import com.compraClick.Util.JWTUtils;
@@ -29,8 +30,8 @@ public class AutenticacionServicioImpl implements AutenticacionServicio {
     @Override
     public TokenDTO login(LoginDTO loginDTO) throws Exception {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        validarLoginDTO(loginDTO);
-        Optional<Cuenta> cuentaOptional = cuentaRepo.findByCorreo(loginDTO.email());
+        //validarLoginDTO(loginDTO);
+        Optional<Cuenta> cuentaOptional = cuentaRepo.findByEmail(loginDTO.email());
         // Validacion si la cuenta ingresada existe
         if(cuentaOptional.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe el correo ingresado");
@@ -40,6 +41,17 @@ public class AutenticacionServicioImpl implements AutenticacionServicio {
         if( !passwordEncoder.matches(loginDTO.password(), cuenta.getPassword()) ){
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "La contraseña ingresada es incorrecta");
         }
+
+        // Verificar si la cuenta es un Usuario y si está activo
+        if (cuenta instanceof Usuario usuario) {
+            if (usuario.getEstadoUsuario() != EstadoUsuario.Activo) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "El usuario no está activo");
+            }
+        } else {
+            // Si la cuenta no es un Usuario
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "El tipo de cuenta no es válido");
+        }
+
         // Creacion del token si las credenciales son correctas
         return new TokenDTO( crearToken(cuenta) );
     }

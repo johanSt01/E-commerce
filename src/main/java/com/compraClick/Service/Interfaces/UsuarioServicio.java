@@ -7,6 +7,6 @@ public interface UsuarioServicio {
 
     int crearUsuario(UsuarioDTO usuarioDTO) throws Exception;
     int actualizarUsuario(DetalleUsuarioDTO usuarioDTO) throws Exception;
-    int eliminarUsuario(UsuarioDTO usuarioDTO) throws Exception;
-    int buscarUsuario(UsuarioDTO usuarioDTO) throws Exception;
+    int eliminarUsuario(int id) throws Exception;
+    DetalleUsuarioDTO obtenerUsuario(int id) throws Exception;
 }

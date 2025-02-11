@@ -9,6 +9,6 @@ public enum Ciudad {
 
     private String nombre;
 
-    private Ciudad (String nombre){}
+    private Ciudad(String nombre){}
 
 }

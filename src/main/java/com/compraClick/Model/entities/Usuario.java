@@ -2,6 +2,7 @@ package com.compraClick.Model.entities;
 
 import com.compraClick.Model.enums.Ciudad;
 import com.compraClick.Model.enums.EstadoUsuario;
+import com.compraClick.Model.enums.TipoUsuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -64,11 +65,18 @@ public class Usuario extends Cuenta implements Serializable {
     private Ciudad idCiudad;
 
     /**
-     * Estado del usuario (activo, inactivo, suspendido, etc.).
+     * Estado del usuario (activo, inactivo).
      * Se almacena como un valor de la enumeración EstadoUsuario.
      */
     @Enumerated(EnumType.STRING)
     private EstadoUsuario estadoUsuario;
+
+    /**
+     * Tipo del usuario (Vendedor, comprador).
+     * Se almacena como un valor de la enumeración TipoUsuario.
+     */
+    @Enumerated(EnumType.STRING)
+    private TipoUsuario tipoUsuario;
 
     /**
      * Suscripción asociada al usuario.
