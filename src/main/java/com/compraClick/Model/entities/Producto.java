@@ -38,6 +38,9 @@ public class Producto {
     @Column(unique = false, insertable = true, updatable = true, nullable = false)
     private int stock; // Cantidad disponible en inventario
 
+    @Column(nullable = false)
+    private boolean activo = true; // Por defecto, el producto está activo
+
     @Enumerated(EnumType.STRING)
     @Column(unique = false, insertable = true, updatable = true, nullable = false)
     private Categoria idCategoria; // Categoría del producto (enum)

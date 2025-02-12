@@ -6,6 +6,8 @@ import com.compraClick.Model.entities.Producto;
 import com.compraClick.Repository.ProductoRepository;
 import com.compraClick.Service.Interfaces.AdministradorServicio;
 
+import java.util.Optional;
+
 public class AdministradorServicioImpl implements AdministradorServicio {
     private ProductoRepository productoRepo;
 
@@ -26,11 +28,32 @@ public class AdministradorServicioImpl implements AdministradorServicio {
 
     @Override
     public int actualizarProducto(DetalleProductoDTO productoDTO) throws Exception {
-        return 0;
+        Optional<Producto> opcional = productoRepo.findById(productoDTO.id());
+        if (opcional.isEmpty()) {
+            throw new Exception("No existe el producto");
+        }
+        Producto productoBuscado = opcional.get();
+        productoBuscado.setNombre(productoDTO.nombre());
+        productoBuscado.setDescripcion(productoDTO.descripcion());
+        productoBuscado.setImagenes(productoDTO.imagenes());
+        productoBuscado.setPrecio(productoDTO.precio());
+        productoBuscado.setStock(productoDTO.stock());
+        productoRepo.save(productoBuscado);
+
+        return productoBuscado.getId();
     }
 
     @Override
     public int eliminarProducto(int id) throws Exception {
-        return 0;
+        Producto producto = productoRepo.findById(id).
+                orElseThrow(() -> new Exception("Producto no encontrado"));
+
+        if (producto.getStock() == 0) {
+            producto.setActivo(false); // Deshabilita el producto
+            productoRepo.save(producto);
+            return 1; // Indica que el producto fue deshabilitado
+        } else {
+            throw new Exception("El producto aún tiene stock, no se puede deshabilitar");
+        }
     }
 }
