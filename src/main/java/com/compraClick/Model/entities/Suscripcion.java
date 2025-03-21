@@ -1,6 +1,7 @@
 package com.compraClick.Model.entities;
 
 import com.compraClick.Model.enums.EstadoSuscripcion;
+import com.compraClick.Model.enums.TipoSuscripcion;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,9 +29,15 @@ public class Suscripcion implements Serializable {
      * Nombre asociado a la suscripción.
      * Este campo es obligatorio, no puede ser nulo, y tiene una longitud máxima de 200 caracteres.
      */
-    @Column(unique = false, length = 200, insertable = true, updatable = false, nullable = false)
+    @Column(unique = false, length = 200, insertable = true, updatable = true, nullable = false)
     private String nombre;
 
+    /**
+     * Descripción de la suscripción
+     * Este campo es obligatorio, no puede ser nulo, y tiene una longitud máxima de 500 caracteres.
+     */
+    @Column(unique = false, length = 500, insertable = true, updatable = true, nullable = false)
+    private String descripcion;
     /**
      * Fecha y hora en que comienza la suscripción.
      * Este campo no puede ser nulo.
@@ -44,6 +51,10 @@ public class Suscripcion implements Serializable {
      */
     @Column(nullable = false)
     private LocalDateTime fechaFin;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoSuscripcion tipo;
 
     /**
      * Estado actual de la suscripción, representado por una enumeración.

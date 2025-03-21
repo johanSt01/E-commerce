@@ -21,12 +21,12 @@ public class UsuarioServicioImpl implements UsuarioServicio {
     @Override
     public int crearUsuario(UsuarioDTO usuarioDTO) throws Exception {
 
-        //Validacion de que el usuario no este registrado
+        //Validacion de que el usuario no esté registrado
         if( estaRepetidaCedula(usuarioDTO.cedula()) ){
             throw new Exception("La cédula "+usuarioDTO.cedula()+" ya está en uso");
         }
 
-        //Validacion de que el usuario no este registrado
+        //Validacion de que el usuario no esté registrado
         if( estaRepetidoCorreo(usuarioDTO.email()) ){
             throw new Exception("El correo "+usuarioDTO.email()+" ya está en uso");
         }
