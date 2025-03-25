@@ -4,6 +4,7 @@ import com.compraClick.DTO.Producto.DetalleProductoDTO;
 import com.compraClick.DTO.Producto.ProductoDTO;
 import com.compraClick.DTO.Suscripcion.DetalleSuscripcionDTO;
 import com.compraClick.DTO.Suscripcion.SuscripcionDTO;
+import com.compraClick.DTO.User.DetalleUsuarioDTO;
 
 import java.util.List;
 
@@ -15,4 +16,5 @@ public interface AdministradorServicio {
     /*int actualizarSuscripcion(DetalleSuscripcionDTO detalleSuscripcionDTO) throws Exception;
     int eliminarSuscripcion(int id) throws Exception;*/
     List<DetalleSuscripcionDTO> ObtenerDetalleSuscripciones() throws Exception;
+    List<DetalleUsuarioDTO> obtenerDetalleUsuarios() throws Exception;
 }

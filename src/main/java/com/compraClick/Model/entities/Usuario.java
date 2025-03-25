@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -119,4 +120,15 @@ public class Usuario extends Cuenta implements Serializable {
      */
     @OneToMany(mappedBy = "idUsuario")
     private List<MetodoPago> metodosPagos;
+
+    /*
+    resetCode para reestablecer la contraseña del usuario
+    */
+    private String resetCode;
+
+    /*
+     * resetCodeExpiry para límite de codigo de reestablecimiento
+     */
+    private LocalDateTime resetCodeExpiry;
+
 }

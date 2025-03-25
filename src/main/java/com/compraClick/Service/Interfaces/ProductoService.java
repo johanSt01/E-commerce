@@ -7,9 +7,5 @@ import com.compraClick.Model.entities.Producto;
 import java.util.List;
 
 public interface ProductoService {
-//    int crearProducto(ProductoDTO productoDTO) throws Exception;
-//    int actualizarProducto(DetalleProductoDTO productoDTO) throws Exception;
-//    int eliminarProducto(int id) throws Exception;
-//    DetalleProductoDTO obtenerProducto(int id) throws Exception;
-//    List<Producto> listarProductos() throws Exception;
+
 }

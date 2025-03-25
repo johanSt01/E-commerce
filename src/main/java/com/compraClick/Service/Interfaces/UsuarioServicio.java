@@ -9,4 +9,5 @@ public interface UsuarioServicio {
     int actualizarUsuario(DetalleUsuarioDTO usuarioDTO) throws Exception;
     int eliminarUsuario(int id) throws Exception;
     DetalleUsuarioDTO obtenerUsuario(int id) throws Exception;
+    void enviarCodigoReset(String email) throws Exception;
 }

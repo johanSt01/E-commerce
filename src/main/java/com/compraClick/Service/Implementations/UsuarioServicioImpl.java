@@ -1,22 +1,29 @@
 package com.compraClick.Service.Implementations;
 
 import com.compraClick.DTO.User.DetalleUsuarioDTO;
+import com.compraClick.DTO.User.ResetPasswordDTO;
 import com.compraClick.DTO.User.UsuarioDTO;
 import com.compraClick.Model.enums.EstadoUsuario;
 import com.compraClick.Repository.UsuarioRepository;
 import com.compraClick.Service.Interfaces.UsuarioServicio;
 import com.compraClick.Model.entities.Usuario;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor //crea el constructor de todos los metodos
 public class UsuarioServicioImpl implements UsuarioServicio {
 
     private final UsuarioRepository usuarioRepo;
+    private final JavaMailSender mailSender;
 
     @Override
     public int crearUsuario(UsuarioDTO usuarioDTO) throws Exception {
@@ -111,20 +118,59 @@ public class UsuarioServicioImpl implements UsuarioServicio {
                 usuario.getIdCiudad());
     }
 
-    /*
-    public int buscarUsuario(UsuarioDTO usuarioDTO) throws Exception {
-        Usuario usuario = usuarioRepo.findByEmail(usuarioDTO.email());
+    // Método para generar y enviar el código de restablecimiento
+    public void enviarCodigoReset(String email) throws Exception {
+        // Buscar el usuario por email
+        Usuario usuario = usuarioRepo.findByEmail(email);
         if (usuario == null) {
-            throw new Exception("Usuario no encontrado");
+            throw new EntityNotFoundException("Usuario no encontrado");
         }
+
+        // Generar un código único
+        String resetCode = UUID.randomUUID().toString();
+        // Establecer un tiempo de expiración (15 minutos)
+        LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(15);
+
+        usuario.setResetCode(resetCode);
+        usuario.setResetCodeExpiry(expiryTime);
+        usuarioRepo.save(usuario);
+
+        // Enviar el código por correo
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(usuario.getEmail());
+        message.setSubject("Código de restablecimiento de contraseña");
+        message.setText("Tu código para restablecer la contraseña es: " + resetCode +
+                "\nEste código expirará en 15 minutos.");
+        mailSender.send(message);
+    }
+
+    // Método para restablecer la contraseña usando el código recibido
+    public String resetPassword(ResetPasswordDTO resetPasswordDTO) throws Exception {
+        // Buscar el usuario por correo
+        Usuario usuario = usuarioRepo.findByEmail(resetPasswordDTO.email());
+        if (usuario == null) {
+            throw new EntityNotFoundException("Usuario no encontrado");
+        }
+
+        // Verificar que el código coincida y no haya expirado
+        if (usuario.getResetCode() == null ||
+                !usuario.getResetCode().equals(resetPasswordDTO.resetCode()) ||
+                usuario.getResetCodeExpiry() == null ||
+                LocalDateTime.now().isAfter(usuario.getResetCodeExpiry())) {
+            throw new Exception("El código de restablecimiento es inválido o ha expirado");
+        }
+
+        // Encriptar la nueva contraseña y actualizar el usuario
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        if (!passwordEncoder.matches(usuarioDTO.password(), usuario.getPassword())) {
-            throw new Exception("Credenciales inválidas");
-        }
-        if (usuario.getEstadoUsuario() != EstadoUsuario.Activo) {
-            throw new Exception("El usuario no está activo");
-        }
-        return usuario.getId();
-    }*/
+        String passwordEncriptada = passwordEncoder.encode(resetPasswordDTO.newPassword());
+        usuario.setPassword(passwordEncriptada);
+
+        // Limpiar el código de restablecimiento para que no pueda reutilizarse
+        usuario.setResetCode(null);
+        usuario.setResetCodeExpiry(null);
+
+        usuarioRepo.save(usuario);
+        return "Contraseña restablecida con éxito";
+    }
 
 }

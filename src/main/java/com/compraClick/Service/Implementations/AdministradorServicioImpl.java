@@ -4,6 +4,7 @@ import com.compraClick.DTO.Producto.DetalleProductoDTO;
 import com.compraClick.DTO.Producto.ProductoDTO;
 import com.compraClick.DTO.Suscripcion.DetalleSuscripcionDTO;
 import com.compraClick.DTO.Suscripcion.SuscripcionDTO;
+import com.compraClick.DTO.User.DetalleUsuarioDTO;
 import com.compraClick.Model.entities.Producto;
 import com.compraClick.Model.entities.Suscripcion;
 import com.compraClick.Model.entities.Usuario;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor //crea el constructor de todos los metodos
 public class AdministradorServicioImpl implements AdministradorServicio {
+
+    // Repositorios para la búsqueda de información en la base de datos
     private final ProductoRepository productoRepo;
     private final SuscripcionRepository suscripcionRepo;
     private final UsuarioRepository usuarioRepo;
@@ -83,7 +86,8 @@ public class AdministradorServicioImpl implements AdministradorServicio {
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
         // Verificar que el usuario no tenga ya una suscripción activa
-        Optional<Suscripcion> suscripcionActiva = suscripcionRepo.findActiveByUsuario(usuario.getId());
+        Optional<Suscripcion> suscripcionActiva = suscripcionRepo.findByIdUsuario_IdAndIdEstado(suscripcionDTO.usuarioId(), EstadoSuscripcion.Activo);
+
         if (suscripcionActiva.isPresent()) {
             throw new Exception("El usuario ya tiene una suscripción activa");
         }
@@ -93,8 +97,8 @@ public class AdministradorServicioImpl implements AdministradorServicio {
 
         // Mapear DTO a Entidad y asignar los valores según el tipo de suscripción
         Suscripcion suscripcion = new Suscripcion();
-        suscripcion.setNombre(suscripcionDTO.tipoSuscripcion().getNombre());
-        suscripcion.setDescripcion(suscripcionDTO.tipoSuscripcion().getDescripcion());
+        suscripcion.setNombre(tipo.getNombre());
+        suscripcion.setDescripcion(tipo.getDescripcion());
         suscripcion.setFechaInicio(suscripcionDTO.fechaInicio());
 
         // Calcular fechaFin sumando la duración (en días) del tipo de suscripción a la fecha de inicio
@@ -123,14 +127,19 @@ public class AdministradorServicioImpl implements AdministradorServicio {
                 .collect(Collectors.toList());
     }
 
-    /*@Override
-    public int actualizarSuscripcion(DetalleSuscripcionDTO detalleSuscripcionDTO) throws Exception {
-        return 0;
-    }
-
     @Override
-    public int eliminarSuscripcion(int id) throws Exception {
-        return 0;
-    }*/
+    public List<DetalleUsuarioDTO> obtenerDetalleUsuarios() throws Exception {
+        return usuarioRepo.findAll().stream()
+                .map(usuario -> new DetalleUsuarioDTO(
+                        usuario.getId(),
+                        usuario.getEmail(),
+                        usuario.getCedula(),
+                        usuario.getNombre(),
+                        usuario.getApellido(),
+                        usuario.getTelefono(),
+                        usuario.getDireccion(),
+                        usuario.getIdCiudad()
+                )).collect(Collectors.toList());
+    }
 
 }
