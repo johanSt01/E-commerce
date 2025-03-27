@@ -30,7 +30,6 @@ public class AdministradorServicioImpl implements AdministradorServicio {
 
     // Repositorios para la búsqueda de información en la base de datos
     private final ProductoRepository productoRepo;
-    private final SuscripcionRepository suscripcionRepo;
     private final UsuarioRepository usuarioRepo;
 
     @Override
@@ -78,46 +77,10 @@ public class AdministradorServicioImpl implements AdministradorServicio {
             throw new Exception("El producto aún tiene stock, no se puede deshabilitar");
         }
     }
-    
-    @Override
-    public int crearSuscripcion(SuscripcionDTO suscripcionDTO) throws Exception {
-        // Validar que el usuario existe
-        Usuario usuario = usuarioRepo.findById(suscripcionDTO.usuarioId())
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-
-        // Verificar que el usuario no tenga ya una suscripción activa
-        Optional<Suscripcion> suscripcionActiva = suscripcionRepo.findByIdUsuario_IdAndIdEstado(suscripcionDTO.usuarioId(), EstadoSuscripcion.Activo);
-
-        if (suscripcionActiva.isPresent()) {
-            throw new Exception("El usuario ya tiene una suscripción activa");
-        }
-
-        // Obtener el tipo de suscripción directamente del DTO
-        TipoSuscripcion tipo = suscripcionDTO.tipoSuscripcion();
-
-        // Mapear DTO a Entidad y asignar los valores según el tipo de suscripción
-        Suscripcion suscripcion = new Suscripcion();
-        suscripcion.setNombre(tipo.getNombre());
-        suscripcion.setDescripcion(tipo.getDescripcion());
-        suscripcion.setFechaInicio(suscripcionDTO.fechaInicio());
-
-        // Calcular fechaFin sumando la duración (en días) del tipo de suscripción a la fecha de inicio
-        LocalDateTime fechaFin = suscripcionDTO.fechaInicio().plusDays(tipo.getDuracionDias());
-        suscripcion.setFechaFin(fechaFin);
-        suscripcion.setIdEstado(suscripcionDTO.idEstado());
-        suscripcion.setPorcentajeDescuento(tipo.getPorcentajeDescuento());
-        suscripcion.setIdUsuario(usuario);
-        suscripcion.setIdEstado(EstadoSuscripcion.Activo);
-
-        // Guardar la suscripción
-        suscripcionRepo.save(suscripcion);
-
-        return suscripcion.getId();
-    }
 
     @Override
-    public List<DetalleSuscripcionDTO> ObtenerDetalleSuscripciones() throws Exception {
-        return Arrays.stream(TipoSuscripcion.values())
+    public List<DetalleSuscripcionDTO> obtenerDetalleSuscripciones() {
+        return List.of(TipoSuscripcion.values()).stream()
                 .map(tipo -> new DetalleSuscripcionDTO(
                         tipo.getNombre(),
                         tipo.getDescripcion(),
@@ -126,6 +89,7 @@ public class AdministradorServicioImpl implements AdministradorServicio {
                 ))
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public List<DetalleUsuarioDTO> obtenerDetalleUsuarios() throws Exception {

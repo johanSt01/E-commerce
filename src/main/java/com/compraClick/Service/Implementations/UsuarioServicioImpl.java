@@ -1,9 +1,21 @@
 package com.compraClick.Service.Implementations;
 
+import com.compraClick.DTO.Compra.CompraDTO;
+import com.compraClick.DTO.MetodosPago.MetodoPagoDTO;
+import com.compraClick.DTO.Suscripcion.SuscripcionDTO;
 import com.compraClick.DTO.User.DetalleUsuarioDTO;
+import com.compraClick.DTO.User.ListaComprasDTO;
 import com.compraClick.DTO.User.ResetPasswordDTO;
 import com.compraClick.DTO.User.UsuarioDTO;
+import com.compraClick.Model.entities.Compra;
+import com.compraClick.Model.entities.MetodoPago;
+import com.compraClick.Model.entities.Suscripcion;
+import com.compraClick.Model.enums.EstadoSuscripcion;
 import com.compraClick.Model.enums.EstadoUsuario;
+import com.compraClick.Model.enums.TipoSuscripcion;
+import com.compraClick.Repository.CompraRepository;
+import com.compraClick.Repository.MetodoPagoRepository;
+import com.compraClick.Repository.SuscripcionRepository;
 import com.compraClick.Repository.UsuarioRepository;
 import com.compraClick.Service.Interfaces.UsuarioServicio;
 import com.compraClick.Model.entities.Usuario;
@@ -15,8 +27,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor //crea el constructor de todos los metodos
@@ -24,6 +38,9 @@ public class UsuarioServicioImpl implements UsuarioServicio {
 
     private final UsuarioRepository usuarioRepo;
     private final JavaMailSender mailSender;
+    private final SuscripcionRepository suscripcionRepo;
+    private final MetodoPagoRepository metodoPagoRepo;
+    private final CompraRepository compraRepo;
 
     @Override
     public int crearUsuario(UsuarioDTO usuarioDTO) throws Exception {
@@ -118,8 +135,26 @@ public class UsuarioServicioImpl implements UsuarioServicio {
                 usuario.getIdCiudad());
     }
 
+    @Override
+    public List<ListaComprasDTO> obtenerComprasDeUsuario(int usuarioId) {
+        // Buscar el usuario y lanzar excepción si no existe
+        Usuario usuario = usuarioRepo.findById(usuarioId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+        // Convertir las compras del usuario a DTO
+        return usuario.getCompras().stream()
+                .map(compra -> new ListaComprasDTO(
+                        compra.getId(),
+                        compra.getFechaCompra(),
+                        compra.getMontoTotal()
+                ))
+                .collect(Collectors.toList());
+    }
+
+
+
     // Método para generar y enviar el código de restablecimiento
-    public void enviarCodigoReset(String email) throws Exception {
+    public void enviarCodigoReset(String email){
         // Buscar el usuario por email
         Usuario usuario = usuarioRepo.findByEmail(email);
         if (usuario == null) {
@@ -171,6 +206,88 @@ public class UsuarioServicioImpl implements UsuarioServicio {
 
         usuarioRepo.save(usuario);
         return "Contraseña restablecida con éxito";
+    }
+
+    @Override
+    public int crearSuscripcion(SuscripcionDTO suscripcionDTO) throws Exception {
+        Usuario usuario = usuarioRepo.findById(suscripcionDTO.usuarioId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+        Optional<Suscripcion> suscripcionActiva = suscripcionRepo.findByIdUsuario_IdAndIdEstado(
+                suscripcionDTO.usuarioId(), EstadoSuscripcion.Activo);
+
+        if (suscripcionActiva.isPresent()) {
+            throw new Exception("El usuario ya tiene una suscripción activa");
+        }
+
+        TipoSuscripcion tipo = suscripcionDTO.tipoSuscripcion();
+        LocalDateTime fechaFin = suscripcionDTO.fechaInicio().plusDays(tipo.getDuracionDias());
+
+        Suscripcion suscripcion = new Suscripcion();
+        suscripcion.setNombre(tipo.getNombre());
+        suscripcion.setDescripcion(tipo.getDescripcion());
+        suscripcion.setFechaInicio(suscripcionDTO.fechaInicio());
+        suscripcion.setFechaFin(fechaFin);
+        suscripcion.setIdEstado(EstadoSuscripcion.Activo);
+        suscripcion.setPorcentajeDescuento(tipo.getPorcentajeDescuento());
+        suscripcion.setIdUsuario(usuario);
+
+        suscripcionRepo.save(suscripcion);
+
+        return suscripcion.getId();
+    }
+
+    @Override
+    public void cancelarSuscripcion(int usuarioId) {
+        Suscripcion suscripcion = suscripcionRepo.findByIdUsuario_IdAndIdEstado(usuarioId, EstadoSuscripcion.Activo)
+                .orElseThrow(() -> new EntityNotFoundException("No hay suscripción activa para cancelar"));
+
+        suscripcion.setIdEstado(EstadoSuscripcion.Cancelado);
+        suscripcionRepo.save(suscripcion);
+    }
+
+    @Override
+    public int registrarMetodoPago(MetodoPagoDTO metodoPagoDTO){
+        Usuario usuario = usuarioRepo.findById(metodoPagoDTO.idUsuario())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+        MetodoPago metodoPago = new MetodoPago();
+        metodoPago.setTipo(metodoPagoDTO.tipo());
+        metodoPago.setDetalle(metodoPagoDTO.detalle());
+        metodoPago.setIdUsuario(usuario);
+
+        metodoPagoRepo.save(metodoPago);
+        return metodoPago.getId();
+    }
+
+    @Override
+    public List<MetodoPagoDTO> obtenerMetodosPagoPorUsuario(int usuarioId) {
+        return metodoPagoRepo.findById(usuarioId).stream()
+                .map(metodo -> new MetodoPagoDTO(
+                        metodo.getId(),
+                        metodo.getTipo(),
+                        metodo.getDetalle(),
+                        usuarioId
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int registrarCompra(CompraDTO compraDTO) {
+        Usuario usuario = usuarioRepo.findById(compraDTO.idUsuario())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+        MetodoPago metodoPago = metodoPagoRepo.findById(compraDTO.idMetodoPago())
+                .orElseThrow(() -> new EntityNotFoundException("Método de pago no encontrado"));
+
+        Compra compra = new Compra();
+        compra.setIdUsuario(usuario);
+        compra.setMontoTotal(compraDTO.montoTotal());
+        compra.setFechaCompra(LocalDateTime.now());
+        compra.setMetodoPago(metodoPago);
+
+        compraRepo.save(compra);
+        return compra.getId();
     }
 
 }

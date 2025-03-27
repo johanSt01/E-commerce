@@ -12,9 +12,8 @@ public interface AdministradorServicio {
     int crearProducto(ProductoDTO productoDTO) throws Exception;
     int actualizarProducto(DetalleProductoDTO productoDTO) throws Exception;
     int eliminarProducto(int id) throws Exception;
-    int crearSuscripcion(SuscripcionDTO suscripcionDTO) throws Exception;
     /*int actualizarSuscripcion(DetalleSuscripcionDTO detalleSuscripcionDTO) throws Exception;
     int eliminarSuscripcion(int id) throws Exception;*/
-    List<DetalleSuscripcionDTO> ObtenerDetalleSuscripciones() throws Exception;
+    List<DetalleSuscripcionDTO> obtenerDetalleSuscripciones();
     List<DetalleUsuarioDTO> obtenerDetalleUsuarios() throws Exception;
 }

@@ -44,8 +44,8 @@ public class Compra implements Serializable {
 
     /**
      * Método de pago utilizado en la compra.
-     * Relación @OneToOne con la entidad MetodoPago.
+     * Relación @ManyToOne con la entidad MetodoPago.
      */
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    private MetodoPago idMetodoPago;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private MetodoPago metodoPago;
 }

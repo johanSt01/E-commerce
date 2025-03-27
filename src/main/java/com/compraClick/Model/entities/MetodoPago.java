@@ -1,9 +1,11 @@
 package com.compraClick.Model.entities;
 
+import com.compraClick.Model.enums.TipoMetodoPago;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,8 +27,9 @@ public class MetodoPago implements Serializable {
     /**
      * Tipo de método de pago (por ejemplo: tarjeta de crédito, PayPal, etc.).
      */
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private String tipo;
+    private TipoMetodoPago tipo;
 
     /**
      * Detalles específicos del método de pago (por ejemplo: número de cuenta, referencia, etc.).
@@ -43,9 +46,9 @@ public class MetodoPago implements Serializable {
 
     /**
      * Compra asociada a este método de pago.
-     * Relación @OneToOne con la entidad Compra.
+     * Relación @OneToMany con la entidad Compra.
      * Uso de `mappedBy` para indicar que la relación está mapeada en la clase Compra.
      */
-    @OneToOne(mappedBy = "idMetodoPago", fetch = FetchType.LAZY)
-    private Compra compra;
+    @OneToMany(mappedBy = "metodoPago", fetch = FetchType.LAZY)
+    private List<Compra> compras;
 }
