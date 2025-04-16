@@ -3,24 +3,20 @@ package com.compraClick.Service.Implementations;
 import com.compraClick.DTO.Producto.DetalleProductoDTO;
 import com.compraClick.DTO.Producto.ProductoDTO;
 import com.compraClick.DTO.Suscripcion.DetalleSuscripcionDTO;
-import com.compraClick.DTO.Suscripcion.SuscripcionDTO;
 import com.compraClick.DTO.User.DetalleUsuarioDTO;
 import com.compraClick.Model.entities.Producto;
-import com.compraClick.Model.entities.Suscripcion;
-import com.compraClick.Model.entities.Usuario;
-import com.compraClick.Model.enums.EstadoSuscripcion;
 import com.compraClick.Model.enums.TipoSuscripcion;
 import com.compraClick.Repository.ProductoRepository;
-import com.compraClick.Repository.SuscripcionRepository;
 import com.compraClick.Repository.UsuarioRepository;
 import com.compraClick.Service.Interfaces.AdministradorServicio;
-import jakarta.persistence.EntityNotFoundException;
+import com.compraClick.Service.Interfaces.ImagesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,6 +27,8 @@ public class AdministradorServicioImpl implements AdministradorServicio {
     // Repositorios para la búsqueda de información en la base de datos
     private final ProductoRepository productoRepo;
     private final UsuarioRepository usuarioRepo;
+
+    private final ImagesService imagesService;
 
     @Override
     public int crearProducto(ProductoDTO productoDTO) throws Exception {
