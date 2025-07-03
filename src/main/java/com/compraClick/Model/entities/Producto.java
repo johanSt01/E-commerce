@@ -1,6 +1,7 @@
 package com.compraClick.Model.entities;
 
 import com.compraClick.Model.enums.Categoria;
+import com.compraClick.Model.enums.EstadoProducto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,7 +30,7 @@ public class Producto {
 
     @ElementCollection //indica que la coleccion se almacena en una tabla diferente
     @CollectionTable(name = "producto_imagenes", joinColumns = @JoinColumn(name = "producto_id")) //Definir el nombre de la tabla secundaria
-    @Column(name = "imagen", length = 255, nullable = false) //define la columna en la tabla secundaria
+    @Column(name = "urlImagen", length = 255, nullable = false) //define la columna en la tabla secundaria
     private List<String> imagenes = new ArrayList<>(); // Lista de imágenes del producto
 
     @Column(unique = false, insertable = true, updatable = true, nullable = false)
@@ -39,7 +40,7 @@ public class Producto {
     private int stock; // Cantidad disponible en inventario
 
     @Column(nullable = false)
-    private boolean activo = true; // Por defecto, el producto está activo
+    private EstadoProducto estadoProducto = EstadoProducto.Activo; // Por defecto, el producto está activo
 
     @Enumerated(EnumType.STRING)
     @Column(unique = false, insertable = true, updatable = true, nullable = false)

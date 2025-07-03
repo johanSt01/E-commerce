@@ -52,7 +52,7 @@ public class JWTUtils {
     }
 
     /*
-    * Este método genera una clave de firma a partir de la clave secreta. */
+    * Este método genera una clave de firma a partir de la clave secreta.*/
     private Key getKey(){
         return new SecretKeySpec(Base64.getDecoder().decode(claveSecreta),
                 SignatureAlgorithm.HS256.getJcaName());

@@ -3,6 +3,7 @@ package com.compraClick.DTO.Producto;
 import com.compraClick.Model.enums.Categoria;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public record ProductoDTO(
         String descripcion,           // Descripción del producto
 
         @NotBlank(message = "Las imagenes son obligatorias")
-        List<String> imagenes,        // Lista de URLs de imágenes
+        List<MultipartFile> imagenes,        // Lista de URLs de imágenes
 
         @NotBlank(message = "El precio es obligatorio")
         double precio,                // Precio del producto

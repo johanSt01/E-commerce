@@ -5,12 +5,14 @@ import com.compraClick.DTO.Producto.ProductoDTO;
 import com.compraClick.DTO.Suscripcion.DetalleSuscripcionDTO;
 import com.compraClick.DTO.User.DetalleUsuarioDTO;
 import com.compraClick.Model.entities.Producto;
+import com.compraClick.Model.enums.EstadoProducto;
 import com.compraClick.Model.enums.TipoSuscripcion;
 import com.compraClick.Repository.ProductoRepository;
 import com.compraClick.Repository.UsuarioRepository;
 import com.compraClick.Service.Interfaces.AdministradorServicio;
 import com.compraClick.Service.Interfaces.ImagesService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,11 +37,24 @@ public class AdministradorServicioImpl implements AdministradorServicio {
         Producto producto = new Producto();
         producto.setNombre(productoDTO.nombre());
         producto.setDescripcion(productoDTO.descripcion());
-        producto.setImagenes(productoDTO.imagenes());
         producto.setPrecio(productoDTO.precio());
         producto.setStock(productoDTO.stock());
         producto.setIdCategoria(productoDTO.idCategoria());
 
+        // Subir imágenes a Cloudinary y obtener las URLs
+        List<String> urlsImagenes = new ArrayList<>();
+
+        if (productoDTO.imagenes() != null && !productoDTO.imagenes().isEmpty()) {
+            for (MultipartFile imagen : productoDTO.imagenes()) {
+                if (!imagen.isEmpty()) {
+                    Map resultado = imagesService.subirImagen(imagen);
+                    String urlImagen = resultado.get("url").toString();
+                    urlsImagenes.add(urlImagen);
+                }
+            }
+        }
+
+        producto.setImagenes(urlsImagenes);
         Producto productoNuevo = productoRepo.save(producto);
 
         return productoNuevo.getId();
@@ -57,6 +72,8 @@ public class AdministradorServicioImpl implements AdministradorServicio {
         productoBuscado.setImagenes(productoDTO.imagenes());
         productoBuscado.setPrecio(productoDTO.precio());
         productoBuscado.setStock(productoDTO.stock());
+        productoBuscado.setIdCategoria(productoDTO.idCategoria());
+        productoBuscado.setEstadoProducto(productoDTO.estadoProducto());
         productoRepo.save(productoBuscado);
 
         return productoBuscado.getId();
@@ -68,12 +85,68 @@ public class AdministradorServicioImpl implements AdministradorServicio {
                 orElseThrow(() -> new Exception("Producto no encontrado"));
 
         if (producto.getStock() == 0) {
-            producto.setActivo(false); // Deshabilita el producto
+            producto.setEstadoProducto(EstadoProducto.Inactivo);// Deshabilita el producto
             productoRepo.save(producto);
             return 1; // Indica que el producto fue deshabilitado
         } else {
             throw new Exception("El producto aún tiene stock, no se puede deshabilitar");
         }
+    }
+
+    @Override
+    public DetalleProductoDTO obtenerProducto(int id) throws Exception {
+        Optional<Producto> opcional = productoRepo.findById(id);
+        if (opcional.isEmpty()) {
+            throw new Exception("Producto no encontrado");
+        }
+
+        Producto producto = opcional.get();
+        return new DetalleProductoDTO(
+                producto.getId(),
+                producto.getNombre(),
+                producto.getDescripcion(),
+                producto.getImagenes(),
+                producto.getPrecio(),
+                producto.getStock(),
+                producto.getIdCategoria(),
+                producto.getEstadoProducto()
+        );
+    }
+
+    @Override
+    public List<DetalleProductoDTO> obtenerTodosLosProductos() throws Exception {
+        List<Producto> productos = productoRepo.findAll();
+
+        return productos.stream()
+                .map(producto -> new DetalleProductoDTO(
+                        producto.getId(),
+                        producto.getNombre(),
+                        producto.getDescripcion(),
+                        producto.getImagenes(),
+                        producto.getPrecio(),
+                        producto.getStock(),
+                        producto.getIdCategoria(),
+                        producto.getEstadoProducto()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DetalleProductoDTO> obtenerProductosActivos() throws Exception {
+        List<Producto> productos = productoRepo.findByEstadoProducto(EstadoProducto.Activo);
+
+        return productos.stream()
+                .map(producto -> new DetalleProductoDTO(
+                        producto.getId(),
+                        producto.getNombre(),
+                        producto.getDescripcion(),
+                        producto.getImagenes(),
+                        producto.getPrecio(),
+                        producto.getStock(),
+                        producto.getIdCategoria(),
+                        producto.getEstadoProducto()
+                ))
+                .collect(Collectors.toList());
     }
 
     @Override

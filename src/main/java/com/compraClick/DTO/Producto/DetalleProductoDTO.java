@@ -1,5 +1,7 @@
 package com.compraClick.DTO.Producto;
 
+import com.compraClick.Model.enums.Categoria;
+import com.compraClick.Model.enums.EstadoProducto;
 import jakarta.validation.constraints.*;
 
 import java.util.List;
@@ -23,6 +25,12 @@ public record DetalleProductoDTO(
         double precio,                // Precio del producto
 
         @NotBlank(message = "Agregar cantidad de productos")
-        int stock                    // Cantidad disponible en inventario
+        int stock,                  // Cantidad disponible en inventario
+
+        @NotBlank(message = "Agregar la categoria correspondiente")
+        Categoria idCategoria,        // Categoría del producto (enum)
+
+        @NotBlank(message = "Agregar el estado del producto (Activo/Inactivo)")
+        EstadoProducto estadoProducto           // Estado del producto (Activo/Inactivo)
 ) {
 }

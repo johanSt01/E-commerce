@@ -31,7 +31,7 @@ public class ImagesServiceImpl implements ImagesService {
     @Override
     public Map subirImagen(MultipartFile imagen) throws Exception {
         File file = convertir(imagen);
-        return cloudinary.uploader().upload(file, ObjectUtils.asMap("foldel", "com/compraClick/fotos"));
+        return cloudinary.uploader().upload(file, ObjectUtils.asMap("folder", "com/compraClick/fotos"));
     }
 
     @Override
