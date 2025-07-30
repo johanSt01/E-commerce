@@ -9,5 +9,12 @@ public enum Categoria {
 
     private String nombre;
 
-    private Categoria(String nombre) {}
+    private Categoria(String nombre) {
+        this.nombre = nombre;
+    }
+
+    // Getter para el nombre
+    public String getNombre() {
+        return nombre;
+    }
 }

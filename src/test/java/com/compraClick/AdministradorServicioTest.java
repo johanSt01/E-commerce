@@ -13,6 +13,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.aspectj.bridge.MessageUtil.fail;
@@ -28,7 +29,7 @@ public class AdministradorServicioTest {
     @Sql("classpath:dataset.sql")
     public void crearProductoTest(){
 
-        List<String> imagenes = List.of("url1", "url2");
+        List<MultipartFile> imagenes = new ArrayList<>();
 
         ProductoDTO productoDTO = new ProductoDTO(
                 "Monitor Gamer",

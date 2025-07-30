@@ -163,8 +163,8 @@ public class UsuarioServicioImpl implements UsuarioServicio {
 
         // Generar un código único
         String resetCode = UUID.randomUUID().toString();
-        // Establecer un tiempo de expiración (15 minutos)
-        LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(15);
+        // Establecer un tiempo de expiración (5 minutos)
+        LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(5);
 
         usuario.setResetCode(resetCode);
         usuario.setResetCodeExpiry(expiryTime);

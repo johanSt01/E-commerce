@@ -12,10 +12,10 @@ import com.compraClick.Repository.UsuarioRepository;
 import com.compraClick.Service.Interfaces.AdministradorServicio;
 import com.compraClick.Service.Interfaces.ImagesService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,30 +34,34 @@ public class AdministradorServicioImpl implements AdministradorServicio {
 
     @Override
     public int crearProducto(ProductoDTO productoDTO) throws Exception {
-        Producto producto = new Producto();
-        producto.setNombre(productoDTO.nombre());
-        producto.setDescripcion(productoDTO.descripcion());
-        producto.setPrecio(productoDTO.precio());
-        producto.setStock(productoDTO.stock());
-        producto.setIdCategoria(productoDTO.idCategoria());
+        try{
+            Producto producto = new Producto();
+            producto.setNombre(productoDTO.nombre());
+            producto.setDescripcion(productoDTO.descripcion());
+            producto.setPrecio(productoDTO.precio());
+            producto.setStock(productoDTO.stock());
+            producto.setIdCategoria(productoDTO.idCategoria());
 
-        // Subir imágenes a Cloudinary y obtener las URLs
-        List<String> urlsImagenes = new ArrayList<>();
+            // Subir imágenes a Cloudinary y obtener las URLs
+            List<String> urlsImagenes = new ArrayList<>();
 
-        if (productoDTO.imagenes() != null && !productoDTO.imagenes().isEmpty()) {
-            for (MultipartFile imagen : productoDTO.imagenes()) {
-                if (!imagen.isEmpty()) {
-                    Map resultado = imagesService.subirImagen(imagen);
-                    String urlImagen = resultado.get("url").toString();
-                    urlsImagenes.add(urlImagen);
+            if (productoDTO.imagenes() != null && !productoDTO.imagenes().isEmpty()) {
+                for (MultipartFile imagen : productoDTO.imagenes()) {
+                    if (!imagen.isEmpty()) {
+                        Map resultado = imagesService.subirImagen(imagen);
+                        String urlImagen = resultado.get("url").toString();
+                        urlsImagenes.add(urlImagen);
+                    }
                 }
             }
+
+            producto.setImagenes(urlsImagenes);
+            Producto productoNuevo = productoRepo.save(producto);
+
+            return productoNuevo.getId();
+        } catch (IOException e) {
+            throw new Exception("Error al subir imágenes: " + e.getMessage());
         }
-
-        producto.setImagenes(urlsImagenes);
-        Producto productoNuevo = productoRepo.save(producto);
-
-        return productoNuevo.getId();
     }
 
     @Override
