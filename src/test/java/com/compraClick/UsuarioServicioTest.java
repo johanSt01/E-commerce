@@ -38,7 +38,7 @@ public class UsuarioServicioTest {
     @Test
     public void crearUsuarioTest() {
         UsuarioDTO usuarioDTO = new UsuarioDTO(
-                "pedrito",
+                "johanstiven@gmail.com",
                 "1234",
                 "1005",
                 "pedro",
@@ -57,7 +57,7 @@ public class UsuarioServicioTest {
 
     @Test
     public void enviarCodigoResetTest() throws Exception {
-        String email = "123jak@email.com";
+        String email = "johan15stiven@gmail.com";
 
         usuarioServicio.enviarCodigoReset(email);
 
@@ -71,7 +71,7 @@ public class UsuarioServicioTest {
 
     @Test
     public void resetPasswordTest() throws Exception {
-        String email = "123jak@email.com";
+        String email = "johan15stiven@gmail.com";
 
         // Primero, se genera el código
         usuarioServicio.enviarCodigoReset(email);

@@ -5,7 +5,7 @@ public enum Categoria {
     Electrodomesticos("Electrodomésticos"),
     Deportes("Deportes"),
     Juegos("Juegos y Juguetes"),
-    Contruccion("Contrucción");
+    Construccion("Construcción");
 
     private String nombre;
 

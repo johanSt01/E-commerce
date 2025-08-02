@@ -39,6 +39,11 @@ public class Producto {
     @Column(unique = false, insertable = true, updatable = true, nullable = false)
     private int stock; // Cantidad disponible en inventario
 
+    /**
+     * Estado de producto (activo, inactivo).
+     * Se almacena como un valor de la enumeración EstadoProducto.
+     */
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoProducto estadoProducto = EstadoProducto.Activo; // Por defecto, el producto está activo
 

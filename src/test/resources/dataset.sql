@@ -1,9 +1,9 @@
 INSERT INTO cuenta (id, email, password) VALUES
-(1, 'juanperez@mail.com', 'pass123'),
-(2, 'lauragomez@mail.com', 'pass456'),
-(3, 'mariolopez@mail.com', 'pass789'),
-(4, 'anitadiaz@mail.com', 'pass101'),
-(5, 'carlosherrera@mail.com', 'pass202');
+(1, 'johan15stiven@gmail.com', 'password1'),
+(2, 'lauragomez@mail.com', 'password1'),
+(3, 'mariolopez@mail.com', 'password1'),
+(4, 'anitadiaz@mail.com', 'password1'),
+(5, 'carlosherrera@mail.com', 'password1');
 
 INSERT INTO usuario (id, nombre, apellido, cedula, direccion, estado_usuario, id_ciudad, reset_code, reset_code_expiry, telefono, tipo_usuario) VALUES
 (1, 'Juan', 'Perez', '1010101010', 'Calle 1 #23', 'Activo', 'Bogota', NULL, NULL, '3101234567', 'Comprador'),
@@ -15,14 +15,14 @@ INSERT INTO usuario (id, nombre, apellido, cedula, direccion, estado_usuario, id
 INSERT INTO administrador (id) VALUES
 (1), (2), (3), (4), (5);
 
-INSERT INTO producto (id, activo, descripcion, id_categoria, nombre, precio, stock) VALUES
-(1, b'1', 'Taladro eléctrico de alta potencia', 'Contruccion', 'Taladro Bosch', 350000, 10),
-(2, b'1', 'Balón oficial de fútbol', 'Deportes', 'Balón Adidas', 120000, 20),
-(3, b'1', 'TV Smart 50 pulgadas', 'Electrodomesticos', 'TV Samsung', 1800000, 5),
-(4, b'1', 'Consola de videojuegos última generación', 'Juegos', 'PlayStation 5', 2500000, 8),
-(5, b'1', 'Laptop ultradelgada', 'Tecnologia', 'Laptop ASUS ZenBook', 3200000, 6);
+INSERT INTO producto (id, nombre, descripcion, precio, stock, estado_producto, id_categoria) VALUES
+(1, 'Taladro Bosch', 'Taladro eléctrico de alta potencia', 350000, 10, 'Activo', 'Construccion'),
+(2, 'Balón Adidas', 'Balón oficial de fútbol', 120000, 20, 'Activo', 'Deportes'),
+(3, 'TV Samsung', 'TV Smart 50 pulgadas', 1800000, 5, 'Activo', 'Electrodomesticos'),
+(4, 'PlayStation 5', 'Consola de videojuegos última generación', 2500000, 8, 'Activo', 'Juegos'),
+(5, 'Laptop ASUS ZenBook', 'Laptop ultradelgada', 3200000, 6, 'Activo', 'Tecnologia');
 
-INSERT INTO producto_imagenes (producto_id, imagen) VALUES
+INSERT INTO producto_imagenes (producto_id, url_imagen) VALUES
 (1, 'taladro.jpg'),
 (2, 'balon.jpg'),
 (3, 'tv.jpg'),
