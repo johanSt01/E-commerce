@@ -57,7 +57,7 @@ public class AutenticacionServicioImpl implements AutenticacionServicio {
     }
 
     /**
-     * Método para validar los datos del LoginDTO.
+     * Metodo para validar los datos del LoginDTO.
      */
     private void validarLoginDTO(LoginDTO loginDTO) {
         if (loginDTO.email() == null || loginDTO.email().isBlank()) {

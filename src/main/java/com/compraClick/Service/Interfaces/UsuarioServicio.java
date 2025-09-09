@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface UsuarioServicio {
 
-    int crearUsuario(UsuarioDTO usuarioDTO) throws Exception;
+    int registrarse(UsuarioDTO usuarioDTO) throws Exception;
     int actualizarUsuario(DetalleUsuarioDTO usuarioDTO) throws Exception;
     int eliminarUsuario(int id) throws Exception;
     DetalleUsuarioDTO obtenerUsuario(int id) throws Exception;

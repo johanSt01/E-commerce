@@ -165,7 +165,6 @@ public class AdministradorServicioImpl implements AdministradorServicio {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public List<DetalleUsuarioDTO> obtenerDetalleUsuarios() throws Exception {
         return usuarioRepo.findAll().stream()

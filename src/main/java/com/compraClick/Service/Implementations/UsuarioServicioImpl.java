@@ -43,7 +43,7 @@ public class UsuarioServicioImpl implements UsuarioServicio {
     private final CompraRepository compraRepo;
 
     @Override
-    public int crearUsuario(UsuarioDTO usuarioDTO) throws Exception {
+    public int registrarse(UsuarioDTO usuarioDTO) throws Exception {
 
         //Validacion de que el usuario no esté registrado
         if( estaRepetidaCedula(usuarioDTO.cedula()) ){
@@ -151,9 +151,8 @@ public class UsuarioServicioImpl implements UsuarioServicio {
                 .collect(Collectors.toList());
     }
 
-
-
-    // Método para generar y enviar el código de restablecimiento
+    // Metodo para generar y enviar el código de restablecimiento
+    @Override
     public void enviarCodigoReset(String email){
         // Buscar el usuario por email
         Usuario usuario = usuarioRepo.findByEmail(email);
@@ -179,7 +178,8 @@ public class UsuarioServicioImpl implements UsuarioServicio {
         mailSender.send(message);
     }
 
-    // Método para restablecer la contraseña usando el código recibido
+    // Metodo para restablecer la contraseña usando el código recibido
+    @Override
     public String resetPassword(ResetPasswordDTO resetPasswordDTO) throws Exception {
         // Buscar el usuario por correo
         Usuario usuario = usuarioRepo.findByEmail(resetPasswordDTO.email());
@@ -289,5 +289,6 @@ public class UsuarioServicioImpl implements UsuarioServicio {
         compraRepo.save(compra);
         return compra.getId();
     }
+
 
 }

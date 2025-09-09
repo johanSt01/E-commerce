@@ -38,7 +38,7 @@ public class UsuarioServicioTest {
     @Test
     public void crearUsuarioTest() {
         UsuarioDTO usuarioDTO = new UsuarioDTO(
-                "johanstiven@gmail.com",
+                "pedritooo@gmail.com",
                 "1234",
                 "1005",
                 "pedro",
@@ -48,7 +48,7 @@ public class UsuarioServicioTest {
                 Ciudad.Armenia
         );
         try {
-            usuarioServicio.crearUsuario(usuarioDTO);
+            usuarioServicio.registrarse(usuarioDTO);
         }catch (Exception e){
             e.printStackTrace(); // imprime el error real en consola
             fail("Error al crear el usuario: " + e.getMessage());
@@ -57,7 +57,7 @@ public class UsuarioServicioTest {
 
     @Test
     public void enviarCodigoResetTest() throws Exception {
-        String email = "johan15stiven@gmail.com";
+        String email = "pedritooo@gmail.com";
 
         usuarioServicio.enviarCodigoReset(email);
 
@@ -71,7 +71,7 @@ public class UsuarioServicioTest {
 
     @Test
     public void resetPasswordTest() throws Exception {
-        String email = "johan15stiven@gmail.com";
+        String email = "pedritooo@gmail.com";
 
         // Primero, se genera el código
         usuarioServicio.enviarCodigoReset(email);
