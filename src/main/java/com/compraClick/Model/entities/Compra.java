@@ -43,6 +43,12 @@ public class Compra implements Serializable {
     private float montoTotal;
 
     /**
+     * Carrito con los productos y detalles de productos
+     */
+    @OneToOne
+    private Carrito idCarrito;
+
+    /**
      * Método de pago utilizado en la compra.
      * Relación @ManyToOne con la entidad MetodoPago.
      */

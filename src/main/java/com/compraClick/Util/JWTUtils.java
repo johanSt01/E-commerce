@@ -35,7 +35,7 @@ public class JWTUtils {
 
     }
     /*
-    * Este método valida y analiza un JWT.*/
+    * Este metodo valida y analiza un JWT.*/
     /*
     * ExpiredJwtException: Lanza una excepción si el token ha expirado.
     * UnsupportedJwtException: Indica que el formato del token no es soportado.

@@ -46,8 +46,8 @@ INSERT INTO carrito (id, id_detalle_carrito_id, id_usuario_id) VALUES
 INSERT INTO metodo_pago (id, detalle, tipo, id_usuario_id) VALUES
 (1, 'Pago con tarjeta visa', 'TARJETA_CREDITO', 1),
 (2, 'Pago vía PayPal', 'PAYPAL', 2),
-(3, 'Transferencia Bancaria', 'TRANSFERENCIA_BANCARIA', 3),
-(4, 'Pago en efectivo', 'EFECTIVO', 4),
+(3, 'Pago con tarjeta', 'TARJETA_DEBITO', 3),
+(4, 'Pago en efectivo', 'EFECTY', 4),
 (5, 'Tarjeta débito', 'TARJETA_CREDITO', 5);
 
 INSERT INTO compra (id, fecha_compra, monto_total, id_usuario_id, metodo_pago_id) VALUES

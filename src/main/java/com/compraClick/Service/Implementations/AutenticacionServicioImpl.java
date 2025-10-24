@@ -2,6 +2,7 @@ package com.compraClick.Service.Implementations;
 
 import com.compraClick.DTO.Authentication.LoginDTO;
 import com.compraClick.DTO.Authentication.TokenDTO;
+import com.compraClick.Model.entities.Administrador;
 import com.compraClick.Model.entities.Cuenta;
 import com.compraClick.Model.entities.Usuario;
 import com.compraClick.Model.enums.EstadoUsuario;
@@ -9,62 +10,97 @@ import com.compraClick.Repository.CuentaRepository;
 import com.compraClick.Service.Interfaces.AutenticacionServicio;
 import com.compraClick.Util.JWTUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Component
+@Service
 @RequiredArgsConstructor
+@Slf4j  // Para logging
 public class AutenticacionServicioImpl implements AutenticacionServicio {
 
     // Repositorio que se utiliza para interactuar con la base de datos
     private final CuentaRepository cuentaRepo;
-    // Manejo de los JWT
-    private final JWTUtils jwtUtils;
+    private final JWTUtils jwtUtils; // Manejo de los JWT
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();  // Inyectado como dependencia
 
     @Override
-    public TokenDTO login(LoginDTO loginDTO) throws Exception {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        //validarLoginDTO(loginDTO);
-        Optional<Cuenta> cuentaOptional = cuentaRepo.findByEmail(loginDTO.email());
-        // Validacion si la cuenta ingresada existe
-        if(cuentaOptional.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe el correo ingresado");
-        }
-        Cuenta cuenta = cuentaOptional.get();
-        // Validacion de la contraseña del usuario
-        if( !passwordEncoder.matches(loginDTO.password(), cuenta.getPassword()) ){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "La contraseña ingresada es incorrecta");
-        }
+    @Transactional(readOnly = true)
+    public TokenDTO login(LoginDTO loginDTO) {
+        log.info("Intento de inicio de sesión para el email: {}", loginDTO.email());
 
-        // Verificar si la cuenta es un Usuario y si está activo
-        if (cuenta instanceof Usuario usuario) {
-            if (usuario.getEstadoUsuario() != EstadoUsuario.Activo) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "El usuario no está activo");
-            }
-        } else {
-            // Si la cuenta no es un Usuario
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "El tipo de cuenta no es válido");
-        }
+        // Buscar la cuenta
+        Cuenta cuenta = cuentaRepo.findByEmail(loginDTO.email())
+                .orElseThrow(() -> {
+                    log.warn("Intento de login con email inexistente: {}", loginDTO.email());
+                    return new ResponseStatusException(
+                            HttpStatus.UNAUTHORIZED,
+                            "Credenciales inválidas"  // Mensaje genérico por seguridad
+                    );
+                });
 
-        // Creacion del token si las credenciales son correctas
-        return new TokenDTO( crearToken(cuenta) );
+        // Validar contraseña
+        validarPassword(loginDTO.password(), cuenta.getPassword());
+
+        // Validar estado de la cuenta
+        validarEstadoCuenta(cuenta);
+
+        // Generar y retornar token
+        String token = crearToken(cuenta);
+        log.info("Login exitoso para el usuario: {}", cuenta.getEmail());
+
+        return new TokenDTO(token);
     }
 
     /**
-     * Método para validar los datos del LoginDTO.
+     * Valida que la contraseña proporcionada coincida con la almacenada.
+     *
+     * @param passwordIngresada Contraseña en texto plano
+     * @param passwordAlmacenada Contraseña hasheada
+     * @throws ResponseStatusException si las contraseñas no coinciden
      */
-    private void validarLoginDTO(LoginDTO loginDTO) {
-        if (loginDTO.email() == null || loginDTO.email().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El correo no puede estar vacío");
+    private void validarPassword(String passwordIngresada, String passwordAlmacenada) {
+        if (!passwordEncoder.matches(passwordIngresada, passwordAlmacenada)) {
+            log.warn("Intento de login con contraseña incorrecta");
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Credenciales inválidas"  // Mensaje genérico por seguridad
+            );
         }
-        if (loginDTO.password() == null || loginDTO.password().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La contraseña no puede estar vacía");
+    }
+
+    /**
+     * Valida el estado de la cuenta según su tipo.
+     *
+     * @param cuenta La cuenta a validar
+     * @throws ResponseStatusException si la cuenta no está activa o no es válida
+     */
+    private void validarEstadoCuenta(Cuenta cuenta) {
+        if (cuenta instanceof Usuario usuario) {
+            if (usuario.getEstadoUsuario() != EstadoUsuario.Activo) {
+                log.warn("Intento de login con usuario inactivo: {}", cuenta.getEmail());
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN,
+                        "La cuenta no está activa"
+                );
+            }
+        } else if (cuenta instanceof Administrador) {
+            log.info("Inicio de sesión como administrador: {}", cuenta.getEmail());
+            // Aquí podrías agregar validaciones adicionales para administradores
+        } else {
+            log.error("Tipo de cuenta no reconocido: {}", cuenta.getClass().getSimpleName());
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error en el sistema de autenticación"
+            );
         }
     }
 
@@ -75,10 +111,10 @@ public class AutenticacionServicioImpl implements AutenticacionServicio {
         String rol;
         String nombre;
         if( cuenta instanceof Usuario){
-            rol = "usuario";
+            rol = "ROLE_USER";
             nombre = ((Usuario) cuenta).getNombre();
         }else{
-            rol = "admin";
+            rol = "ROLE_ADMIN";
             nombre = "Administrador";
         }
         Map<String, Object> map = new HashMap<>();
