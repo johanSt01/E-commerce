@@ -23,4 +23,7 @@ public class Carrito implements Serializable {
 
     @ManyToOne
     private DetalleCarrito idDetalleCarrito;
+
+    @OneToOne(mappedBy = "idCarrito")
+    private Compra idCompra;
 }

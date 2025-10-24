@@ -1,10 +1,7 @@
 package com.compraClick.DTO.User;
 
 import com.compraClick.Model.enums.Ciudad;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public record UsuarioDTO(
         @NotBlank(message = "El correo es obligatorio")
@@ -16,7 +13,7 @@ public record UsuarioDTO(
         String password,
 
         @NotBlank(message = "La cédula es obligatoria")
-        @Size(min = 12, max = 12, message = "La cédula debe tener 12 caracteres")
+        @Size(min = 5, max = 12)
         String cedula,
 
         @NotBlank(message = "El nombre es obligatorio")
@@ -35,7 +32,7 @@ public record UsuarioDTO(
         @Size(max = 100, message = "La dirección no puede exceder los 100 caracteres")
         String direccion,
 
-        @NotBlank(message = "La ciudad es obligatoria")
+        @NotNull(message = "La ciudad es obligatoria")
         Ciudad idCiudad
 ) {
 }
