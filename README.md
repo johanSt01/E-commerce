@@ -8,8 +8,8 @@ Sistema de comercio electrónico desarrollado con Spring Boot que permite la ges
 - Spring Boot 3.1.2
 - Spring Security
 - JWT (JSON Web Tokens)
-- JPA/Hibernate
-- MySQL/PostgreSQL
+- JPA
+- MySQL
 - Gradle
 
 ## Modelo de Negocio
