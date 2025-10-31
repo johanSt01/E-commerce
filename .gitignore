@@ -43,4 +43,4 @@ bin/
 .DS_Store
 
 # Ignorar propiedades sensibles
-application.properties
+#application.properties
