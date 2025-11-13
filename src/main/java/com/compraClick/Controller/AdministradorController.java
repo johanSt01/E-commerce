@@ -8,6 +8,7 @@ import com.compraClick.Service.Interfaces.AdministradorServicio;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,13 +20,14 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admins")
+@RequestMapping("/api")
 @AllArgsConstructor
 public class AdministradorController {
 
     private final AdministradorServicio administradorServicio;
 
-    @PostMapping(value = "/crear", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(value = "/crearProducto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MensajeDTO<String>> crearProducto(
             @RequestParam("nombre") String nombre,
             @RequestParam("descripcion") String descripcion,
@@ -39,10 +41,10 @@ public class AdministradorController {
                     nombre, descripcion, imagenes, precio, stock, idCategoria
             );
 
-            // int idProducto = administradorServicio.crearProducto(productoDTO);
+            int idProducto = administradorServicio.crearProducto(productoDTO);
 
             return ResponseEntity.ok().body(new MensajeDTO<>(false,
-                    "Producto creado exitosamente"
+                    "Producto creado exitosamente, Id del producto: "  + idProducto
             ));
 
         } catch (MethodArgumentTypeMismatchException e) {
