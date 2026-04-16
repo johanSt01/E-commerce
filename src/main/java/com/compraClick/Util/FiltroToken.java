@@ -5,25 +5,29 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class FiltroToken implements Filter {
+public class FiltroToken extends OncePerRequestFilter {
+
     private final JWTUtils jwtUtils;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    public void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws ServletException, IOException {
-        HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse res = (HttpServletResponse) response;
 
         String token = getToken(req);
         try {
@@ -54,7 +58,7 @@ public class FiltroToken implements Filter {
             e.printStackTrace();
         }
 
-        chain.doFilter(request, response);
+        chain.doFilter(req, res);
     }
 
     private String getToken(HttpServletRequest req) {
@@ -63,5 +67,7 @@ public class FiltroToken implements Filter {
             return header.replace("Bearer ", "");
         return null;
     }
+
+
 }
 
