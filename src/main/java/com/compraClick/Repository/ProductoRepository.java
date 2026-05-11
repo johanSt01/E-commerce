@@ -1,10 +1,12 @@
 package com.compraClick.Repository;
 
+import com.compraClick.DTO.Producto.DetalleProductoDTO;
 import com.compraClick.Model.entities.Producto;
 import com.compraClick.Model.enums.EstadoProducto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductoRepository extends JpaRepository<Producto, Integer> {
 
@@ -18,4 +20,6 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
 
     // Para rango de precios
     List<Producto> findByEstadoProductoAndPrecioBetween(EstadoProducto estadoProducto, Double minPrecio, Double maxPrecio);
+
+    Optional<DetalleProductoDTO> findProductoById(int id);
 }

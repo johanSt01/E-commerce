@@ -98,23 +98,23 @@ public class AdministradorServicioImpl implements AdministradorServicio {
     }
 
     @Override
-    public DetalleProductoDTO obtenerProducto(int id) throws Exception {
-        Optional<Producto> opcional = productoRepo.findById(id);
-        if (opcional.isEmpty()) {
-            throw new Exception("Producto no encontrado");
-        }
-
-        Producto producto = opcional.get();
-        return new DetalleProductoDTO(
-                producto.getId(),
-                producto.getNombre(),
-                producto.getDescripcion(),
-                producto.getImagenes(),
-                producto.getPrecio(),
-                producto.getStock(),
-                producto.getIdCategoria(),
-                producto.getEstadoProducto()
-        );
+    public Optional<DetalleProductoDTO> obtenerProducto(int id) throws Exception {
+        return productoRepo.findProductoById(id);
+//        if (opcional.isEmpty()) {
+//            throw new Exception("Producto no encontrado");
+//        }
+//
+//        Producto producto = opcional.get();
+//        return new DetalleProductoDTO(
+//                producto.getId(),
+//                producto.getNombre(),
+//                producto.getDescripcion(),
+//                producto.getImagenes(),
+//                producto.getPrecio(),
+//                producto.getStock(),
+//                producto.getIdCategoria(),
+//                producto.getEstadoProducto()
+//        );
     }
 
     @Override

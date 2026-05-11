@@ -7,12 +7,13 @@ import com.compraClick.DTO.Suscripcion.SuscripcionDTO;
 import com.compraClick.DTO.User.DetalleUsuarioDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AdministradorServicio {
     int crearProducto(ProductoDTO productoDTO) throws Exception;
     int actualizarProducto(DetalleProductoDTO productoDTO) throws Exception;
     int eliminarProducto(int id) throws Exception;
-    DetalleProductoDTO obtenerProducto(int id) throws Exception;
+    Optional<DetalleProductoDTO> obtenerProducto(int id) throws Exception;
     List<DetalleProductoDTO> obtenerTodosLosProductos() throws Exception;
     List<DetalleProductoDTO> obtenerProductosActivos() throws Exception;
     /*int actualizarSuscripcion(DetalleSuscripcionDTO detalleSuscripcionDTO) throws Exception;

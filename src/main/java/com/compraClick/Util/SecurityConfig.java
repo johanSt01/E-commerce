@@ -36,6 +36,11 @@ public class SecurityConfig {
                                 .requestMatchers("/api/user/**").hasRole("USER")
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/public/**").permitAll()
+                                .requestMatchers(
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html"
+                                ).permitAll()
                                 .anyRequest().authenticated())
                         .addFilterBefore(filtroToken, UsernamePasswordAuthenticationFilter.class);
 

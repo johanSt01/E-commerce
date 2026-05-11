@@ -2,6 +2,8 @@ package com.compraClick.DTO.Producto;
 
 import com.compraClick.Model.enums.Categoria;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,16 +18,16 @@ public record ProductoDTO(
         @Size(max = 200, message = "La descripción no puede exceder los 500 caracteres")
         String descripcion,           // Descripción del producto
 
-        @NotBlank(message = "Las imagenes son obligatorias")
+        @NotEmpty(message = "Debe incluir al menos una imagen")
         List<MultipartFile> imagenes,        // Lista de URLs de imágenes
 
-        @NotBlank(message = "El precio es obligatorio")
+        @NotNull(message = "El precio es obligatorio")
         double precio,                // Precio del producto
 
-        @NotBlank(message = "Agregar cantidad de productos")
+        @NotNull(message = "Agregar cantidad de productos")
         int stock,                    // Cantidad disponible en inventario
 
-        @NotBlank(message = "Agregar la categoria correspondiente")
+        @NotNull(message = "Agregar la categoria correspondiente")
         Categoria idCategoria         // Categoría del producto (enum)
 ) {
 }
